@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var useragent = require('useragent');
+var request = require('request');
 
 var app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -29,3 +30,19 @@ app.get('/api', function(req, res){
 app.get('/', function(req, res){
     res.send('Please add /api in your browser to use the api');
 });
+
+var requestLoop = setInterval(function(){
+    request({
+        url: "https://whoami-api-omar.herokuapp.com/api",
+        method: "GET",
+        timeout: 10000,
+        followRedirect: true,
+        maxRedirects: 10
+    },function(error, response, body){
+        if(!error && response.statusCode == 200){
+            console.log(JSON.stringify(response.body, undefined, 2));
+        }else{
+            console.log('error' + response.statusCode);
+        }
+    });
+  }, 60000);
